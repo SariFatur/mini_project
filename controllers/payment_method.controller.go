@@ -8,26 +8,26 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func CreateGuestController(c echo.Context) error {
-	guest := model.Guest{}
-	c.Bind(&guest)
+func CreatePaymentMethodController(c echo.Context) error {
+	room := model.Payment_method{}
+	c.Bind(&room)
 
-	err := config.DB.Create(&guest).Error
+	err := config.DB.Save(&room).Error
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": err.Error(),
 		})
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"massage": "success create account",
-		"guest":   guest,
+		"massage": "success create payment method",
+		"room":    room,
 	})
 }
 
-func GetGuestController(c echo.Context) error {
-	var guest []model.Guest
+func GetPaymentMethodController(c echo.Context) error {
+	var PM []model.Payment_method
 
-	err := config.DB.Find(&guest).Error
+	err := config.DB.Find(&PM).Error
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": err.Error(),
@@ -35,31 +35,31 @@ func GetGuestController(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success",
-		"data":    guest,
+		"data":    PM,
 	})
 }
 
-func DeleteGuestController(c echo.Context) error {
+func DeletePaymentMethodController(c echo.Context) error {
 	stringId := c.Param("id")
-	err := config.DB.Delete(&model.Guest{}, "id = ?", stringId).Debug().Error
+	err := config.DB.Delete(&model.Payment_method{}, "id = ?", stringId).Debug().Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "success delete account with idGuest `" + stringId + "`",
+		"message": "success delete payment method with id `" + stringId + "`",
 	})
 }
 
-func UpdateGuestController(c echo.Context) error {
-	guest := model.Guest{}
-	c.Bind(&guest)
+func UpdatePaymentMethodController(c echo.Context) error {
+	PM := model.Payment_method{}
+	c.Bind(&PM)
 	stringId := c.Param("id")
-	err := config.DB.Model(&guest).Where("idGuest = ?", stringId).Updates(guest).Debug().Error
+	err := config.DB.Model(&PM).Where("id = ?", stringId).Updates(PM).Debug().Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success",
-		"guest":   guest,
+		"PM":      PM,
 	})
 }
