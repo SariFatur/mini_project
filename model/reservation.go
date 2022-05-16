@@ -4,8 +4,8 @@ import "time"
 
 type Reservation struct {
 	Id       int       `gorm:"primaryKey" json:"id"`
-	IdGuest  int       `gorm:"foreignKey: GuestID" json:"idGuest"`
-	IdRoom   int       `gorm:"foreignKey: RoomID" json:"idRoom"`
+	IdGuest  int       `gorm:"foreignKey: IdGuest" json:"idGuest"`
+	IdRoom   int       `gorm:"foreignKey: IdRoom" json:"idRoom"`
 	Checkin  time.Time `json:"checkin"`
 	Checkout time.Time `json:"checout"`
 }

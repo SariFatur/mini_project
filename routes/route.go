@@ -1,33 +1,41 @@
 package routes
 
 import (
+	"myproject/constants"
 	"myproject/controllers"
+	"myproject/middleware"
+	m "myproject/middleware"
 
 	"github.com/labstack/echo/v4"
+	mid "github.com/labstack/echo/v4/middleware"
 )
 
 func New() *echo.Echo {
 	e := echo.New()
 
 	// route user
-	// e.GET("/users", controllers.GetUserController)
-	// e.POST("/users", controllers.CreateUserController)
-	// e.POST("/login", controllers.LoginUserController)
+	e.POST("/login", controllers.LoginController)
 
-	// eAuthBasic := e.Group("/auth")
-	// eAuthBasic.Use(mid.BasicAuth(middleware.BasicAuthDB))
-	// eAuthBasic.GET("/users", controllers.GetUserController)
-
-	// eJwt := e.Group("/jwt")
-	// eJwt.Use(mid.JWT([]byte(constants.SECRET_JWT)))
-	// eJwt.GET("/users", controllers.GetUserController)
+	e.GET("/guest", controllers.GetGuestController)
+	e.DELETE("/guest/:id", controllers.DeleteGuestController)
+	e.PUT("/guest/:id", controllers.UpdateGuestController)
+	m.LogMiddleware(e)
 
 	// route guest
 	e.GET("/guest", controllers.GetGuestController)
-	// m.LogMiddleware(e)
-	e.POST("/guest", controllers.CreateGuestController)
 	e.DELETE("/guest/:id", controllers.DeleteGuestController)
 	e.PUT("/guest/:id", controllers.UpdateGuestController)
+	m.LogMiddleware(e)
+	// e.POST("/login", controllers.LoginGuestController)
+	e.POST("/guest", controllers.CreateGuestController)
+
+	eAuthBasic := e.Group("/auth")
+	eAuthBasic.Use(mid.BasicAuth(middleware.BasicAuthDB))
+	eAuthBasic.GET("/users", controllers.GetGuestController)
+
+	eJwt := e.Group("/jwt")
+	eJwt.Use(mid.JWT([]byte(constants.SECRET_JWT)))
+	eJwt.GET("/users", controllers.GetGuestController)
 
 	// route room
 	e.GET("/room", controllers.GetRoomController)
@@ -46,6 +54,12 @@ func New() *echo.Echo {
 	e.POST("/reservation", controllers.CreateReservationController)
 	e.DELETE("/reservation/:id", controllers.DeleteReservationController)
 	e.PUT("/reservation/:id", controllers.UpdateReservationController)
+
+	// route transactions
+	e.GET("/transactions", controllers.GetTransactionsController)
+	e.POST("/transactions", controllers.CreateTransactionsController)
+	e.DELETE("/transactions/:id", controllers.DeleteTransactionsonstroller)
+	e.PUT("/transactions/:id", controllers.UpdateTransactionsController)
 
 	return e
 }
