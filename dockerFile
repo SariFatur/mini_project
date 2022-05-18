@@ -1,0 +1,11 @@
+FROM golang:alpine
+
+RUN mkdir /myapps
+COPY . /myapps
+WORKDIR /myapps
+
+RUN go build -o myapps
+
+EXPOSE 80
+
+CMD ["./apps"]

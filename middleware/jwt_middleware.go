@@ -7,9 +7,9 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func CreateToken(userId int, name string) (string, error) {
+func CreateToken(idGuest int, name string) (string, error) {
 	claims := jwt.MapClaims{}
-	claims["userId"] = userId
+	claims["idGuest"] = idGuest
 	claims["name"] = name
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 

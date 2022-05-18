@@ -10,19 +10,18 @@ import (
 
 func New() *echo.Echo {
 	e := echo.New()
+	eJwt := e.Group("/jwt")
+	eJwt.Use(mid.JWT([]byte(constants.SECRET_JWT)))
+
+	// route login
+	e.POST("/login", controllers.LoginController)
 
 	// route guest
 	e.GET("/guest", controllers.GetGuestController)
+	e.GET("/guest/:id", controllers.GetGuestController)
 	e.DELETE("/guest/:id", controllers.DeleteGuestController)
 	e.PUT("/guest/:id", controllers.UpdateGuestController)
-
-	// e.POST("/login", controllers.LoginGuestController)
 	e.POST("/guest", controllers.CreateGuestController)
-	e.POST("/login", controllers.LoginController)
-
-	eJwt := e.Group("/jwt")
-	eJwt.Use(mid.JWT([]byte(constants.SECRET_JWT)))
-	eJwt.GET("/users", controllers.GetGuestController)
 
 	// route room
 	e.GET("/room", controllers.GetRoomController)
@@ -45,7 +44,7 @@ func New() *echo.Echo {
 	// route transactions
 	e.GET("/transactions", controllers.GetTransactionsController)
 	e.POST("/transactions", controllers.CreateTransactionsController)
-	e.DELETE("/transactions/:id", controllers.DeleteTransactionsonstroller)
+	e.DELETE("/transactions/:id", controllers.DeleteTransactionsController)
 	e.PUT("/transactions/:id", controllers.UpdateTransactionsController)
 
 	return e

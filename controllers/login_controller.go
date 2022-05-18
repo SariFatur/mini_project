@@ -29,10 +29,10 @@ func LoginController(c echo.Context) error {
 		})
 	}
 
-	userResponse := model.GuestResponse{guest.Id, guest.Name, guest.Email, token}
+	guestResponse := model.GuestResponse{guest.Id, guest.Name, guest.Email, token}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"massage": "success create guest",
-		"user":    userResponse,
+		"user":    guestResponse,
 	})
 }

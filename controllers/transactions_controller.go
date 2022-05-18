@@ -39,7 +39,7 @@ func GetTransactionsController(c echo.Context) error {
 	})
 }
 
-func DeleteTransactionsonstroller(c echo.Context) error {
+func DeleteTransactionsController(c echo.Context) error {
 	stringId := c.Param("id")
 	err := config.DB.Delete(&model.Transactions{}, "id = ?", stringId).Debug().Error
 	if err != nil {
