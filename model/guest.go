@@ -6,7 +6,7 @@ type Guest struct {
 	Address      string `json:"address"`
 	Phone_number string `json:"phone_number"`
 	Email        string `json:"email"`
-	Password     string `json:"password"`
+	Password     string `json:"-"`
 }
 
 type GuestResponse struct {

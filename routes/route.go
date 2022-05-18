@@ -3,8 +3,6 @@ package routes
 import (
 	"myproject/constants"
 	"myproject/controllers"
-	"myproject/middleware"
-	m "myproject/middleware"
 
 	"github.com/labstack/echo/v4"
 	mid "github.com/labstack/echo/v4/middleware"
@@ -13,25 +11,14 @@ import (
 func New() *echo.Echo {
 	e := echo.New()
 
-	// route user
-	e.POST("/login", controllers.LoginController)
-
-	e.GET("/guest", controllers.GetGuestController)
-	e.DELETE("/guest/:id", controllers.DeleteGuestController)
-	e.PUT("/guest/:id", controllers.UpdateGuestController)
-	m.LogMiddleware(e)
-
 	// route guest
 	e.GET("/guest", controllers.GetGuestController)
 	e.DELETE("/guest/:id", controllers.DeleteGuestController)
 	e.PUT("/guest/:id", controllers.UpdateGuestController)
-	m.LogMiddleware(e)
+
 	// e.POST("/login", controllers.LoginGuestController)
 	e.POST("/guest", controllers.CreateGuestController)
-
-	eAuthBasic := e.Group("/auth")
-	eAuthBasic.Use(mid.BasicAuth(middleware.BasicAuthDB))
-	eAuthBasic.GET("/users", controllers.GetGuestController)
+	e.POST("/login", controllers.LoginController)
 
 	eJwt := e.Group("/jwt")
 	eJwt.Use(mid.JWT([]byte(constants.SECRET_JWT)))

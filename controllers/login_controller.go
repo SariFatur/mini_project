@@ -1,54 +1,38 @@
 package controllers
 
 import (
-	"encoding/base64"
-	"fmt"
-	"myproject/repository"
-	"myproject/utils"
-	"strings"
+	"myproject/config"
+	"myproject/middleware"
+	"myproject/model"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-type LoginController struct {
-	iUserRepo repository.IUserRepo
-}
+func LoginController(c echo.Context) error {
+	guest := model.Guest{}
+	c.Bind(&guest)
 
-func NewLoginController(iUserRepo repository.IUserRepo) LoginController {
-	return LoginController{iUserRepo}
-}
-
-func (ctrl LoginController) Login(c echo.Context) error {
-	authorization := c.Request().Header.Get("authorization")
-	arrAuth := strings.Split(authorization, " ")
-	if len(arrAuth) != 2 {
-		fmt.Println("header auth invalid")
-		return c.JSON(400, map[string]interface{}{
-			"message": "header auth invalid",
-		})
-	} else if arrAuth[0] != "Basic" {
-		fmt.Println("header auth must be basic")
-		return c.JSON(400, map[string]interface{}{
-			"message": "header auth must be basic",
-		})
-	}
-	// "Basic am9objpzZWNyZXQ="
-	var decodeByte, _ = base64.StdEncoding.DecodeString(arrAuth[1])
-	// john:secret
-	arrDecodeString := strings.Split(string(decodeByte), ":")
-	username, password := arrDecodeString[0], arrDecodeString[1]
-	user, err := ctrl.iUserRepo.GetUserByUsername(username)
+	err := config.DB.Where("email = ? AND password = ?", guest.Email, guest.Password).First(&guest).Error
 	if err != nil {
-		return c.JSON(400, map[string]interface{}{
-			"message": "user not registered",
-		})
-	} else if user.Password != password {
-		return c.JSON(400, map[string]interface{}{
-			"message": "password incorect",
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "fail login",
+			"error":   err.Error(),
 		})
 	}
-	jwToken := utils.CreateJWT(user)
-	return c.JSON(400, map[string]interface{}{
-		"token": jwToken,
+
+	token, err := middleware.CreateToken(guest.Id, guest.Name)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "fail login",
+			"error":   err.Error(),
+		})
+	}
+
+	userResponse := model.GuestResponse{guest.Id, guest.Name, guest.Email, token}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"massage": "success create guest",
+		"user":    userResponse,
 	})
 }
