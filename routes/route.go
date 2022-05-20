@@ -10,6 +10,7 @@ import (
 
 func New() *echo.Echo {
 	e := echo.New()
+
 	eJwt := e.Group("/jwt")
 	eJwt.Use(mid.JWT([]byte(constants.SECRET_JWT)))
 
@@ -18,8 +19,8 @@ func New() *echo.Echo {
 
 	// route guest
 	e.GET("/guest", controllers.GetGuestController)
-	e.GET("/guest/:id", controllers.GetGuestController)
-	e.DELETE("/guest/:id", controllers.DeleteGuestController)
+	e.GET("/guest/:id", controllers.GetGuestByIdController)
+	eJwt.DELETE("/guest/:id", controllers.DeleteGuestController)
 	e.PUT("/guest/:id", controllers.UpdateGuestController)
 	e.POST("/guest", controllers.CreateGuestController)
 

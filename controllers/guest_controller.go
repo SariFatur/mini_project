@@ -68,7 +68,7 @@ func UpdateGuestController(c echo.Context) error {
 	guest := model.Guest{}
 	c.Bind(&guest)
 	stringId := c.Param("id")
-	err := config.DB.Model(&guest).Where("idGuest = ?", stringId).Updates(guest).Debug().Error
+	err := config.DB.Model(&guest).Where("id = ?", stringId).Updates(guest).Debug().Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

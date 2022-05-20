@@ -1,11 +1,10 @@
-FROM golang:alpine
+FROM golang:1.17
 
-RUN mkdir /myapps
-COPY . /myapps
-WORKDIR /myapps
+RUN mkdir /app
 
-RUN go build -o myapps
+COPY go.mod /app
+COPY go.sum /app
 
-EXPOSE 80
-
-CMD ["./apps"]
+COPY . .
+RUN go build -o app
+CMD ["/app/main"]
